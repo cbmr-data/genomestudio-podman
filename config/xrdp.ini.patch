@@ -1,0 +1,29 @@
+--- /etc/xrdp/xrdp.ini.orig	2025-04-14 10:12:46.985732257 +0200
++++ /etc/xrdp/xrdp.ini	2025-04-14 10:14:51.393143474 +0200
+@@ -50,7 +50,7 @@
+
+ ; security layer can be 'tls', 'rdp' or 'negotiate'
+ ; for client compatible layer
+-security_layer=negotiate
++security_layer=tls
+
+ ; minimum security level allowed for client for classic RDP encryption
+ ; use tls_ciphers to configure TLS encryption
+@@ -59,14 +59,14 @@
+
+ ; X.509 certificate and private key
+ ; openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365
+-certificate=
+-key_file=
++certificate=/etc/xrdp/cert.pem
++key_file=/etc/xrdp/key.pem
+
+ ; set SSL protocols
+ ; can be comma separated list of 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3'
+ ssl_protocols=TLSv1.2, TLSv1.3
+ ; set TLS cipher suites
+-#tls_ciphers=HIGH
++tls_ciphers=HIGH
+
+ ; concats the domain name to the user if set for authentication with the separator
+ ; for example when the server is multi homed with SSSd

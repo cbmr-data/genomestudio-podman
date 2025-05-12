@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Install Genome Studio
+Exec=bash /opt/genome-studio/bin/install-genome-studio.sh
+Terminal=true
+Type=Application

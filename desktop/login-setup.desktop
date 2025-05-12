@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Login setup
+Exec=bash /opt/genome-studio/bin/login-setup.sh
+Terminal=true
+Type=Application

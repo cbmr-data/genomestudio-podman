@@ -1,0 +1,11 @@
+--- /etc/default/keyboard.modified	2025-04-28 10:09:36.710107289 +0200
++++ /etc/default/keyboard	2025-04-28 10:10:01.522434588 +0200
+@@ -3,7 +3,7 @@
+ # Consult the keyboard(5) manual page.
+
+ XKBMODEL="pc105"
+-XKBLAYOUT="us"
++XKBLAYOUT="dk"
+ XKBVARIANT=""
+ XKBOPTIONS=""
+

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=GenomeStudio 2.0
+Exec=env WINEPREFIX="/opt/genome-studio/wineprefix" wine "C:\\Program Files\\Illumina\\GenomeStudio 2.0\\GenomeStudio.exe"
+Type=Application
+StartupNotify=true
+Icon=991D_GenomeStudio.0
+StartupWMClass=genomestudio.exe
