@@ -121,6 +121,7 @@ def main(argv: list[str]) -> int:
 
     mount_points: list[Path] = [
         Path("/scratch"),
+        Path("~").expanduser(),
     ]
 
     for project in validate_names(args.projects, PROJECT_ROOT, "Project"):
@@ -159,8 +160,6 @@ def main(argv: list[str]) -> int:
         f"+1000:@{args.uid}:1",
         "--gidmap",
         f"+1000:@{args.gid}:1",
-        "-v",
-        f"{Path('~').expanduser()}:/home/{USERNAME}",
         "-v",
         f"{args.wine_prefix}:/opt/genome-studio/wineprefix:z",
     ]
