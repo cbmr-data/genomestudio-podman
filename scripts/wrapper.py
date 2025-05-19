@@ -113,6 +113,19 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
     parser.add_argument("--port", type=int, default=3389, help="Exposed port for XRDP")
 
+    parser.add_argument(
+        "--dry-run",
+        default=False,
+        action="store_true",
+        help="Print podman command to be executed",
+    )
+
+    parser.add_argument(
+        "--entry-point",
+        default=None,
+        help="Override podman container entry-point",
+    )
+
     return parser.parse_args(argv)
 
 
@@ -167,8 +180,15 @@ def main(argv: list[str]) -> int:
     for path in mount_points:
         command += ["-v", f"{path}:{path}"]
 
+    if args.entry_point is not None:
+        command += ["--entrypoint", args.entry_point]
+
     command += [f"{IMAGE}:{VERSION}"]
-    os.execvp(args.podman, command)
+    if args.dry_run:
+        print(*(shlex.quote(v) for v in command))
+        return 0
+    else:
+        os.execvp(args.podman, command)
 
 
 if __name__ == "__main__":
