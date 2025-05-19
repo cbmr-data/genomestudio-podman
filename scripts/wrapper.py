@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# pyright: strict
+#!/usr/bin/env python3.11
 from __future__ import annotations
 
 import argparse
@@ -40,9 +39,10 @@ def quote(value: str | Path) -> str:
     return shlex.quote(str(value))
 
 
-def validate_names(values: Iterable[Path], name: str) -> Iterable[Path]:
+def validate_names(values: Iterable[Path], root: Path, name: str) -> Iterable[Path]:
     for value in values:
-        if value.parent != Path("."):
+        value = value.resolve()
+        if value.parent not in (Path("."), root):
             abort(f"{name} {quote(value)} contains dir component; use name only")
 
         yield value
@@ -123,17 +123,17 @@ def main(argv: list[str]) -> int:
         Path("/scratch"),
     ]
 
-    for project in validate_names(args.projects, "Project"):
+    for project in validate_names(args.projects, PROJECT_ROOT, "Project"):
         for subfolder in PROJECT_FOLDERS:
             mount_points.append(PROJECT_ROOT / project.name / subfolder)
 
-    for dataset in validate_names(args.datasets, "Dataset"):
+    for dataset in validate_names(args.datasets, DATASET_ROOT, "Dataset"):
         mount_points.append(DATASET_ROOT / dataset.name)
 
-    for sdir in validate_names(args.sdirs, "S-drive group"):
+    for sdir in validate_names(args.sdirs, SDIR_ROOT, "S-drive group"):
         mount_points.append(SDIR_ROOT / sdir)
 
-    for ndir in validate_names(args.ndirs, "N-drive group"):
+    for ndir in validate_names(args.ndirs, NDIR_ROOT, "N-drive group"):
         mount_points.append(NDIR_ROOT / ndir)
 
     if args.hdir:
