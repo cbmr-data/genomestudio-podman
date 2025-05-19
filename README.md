@@ -24,15 +24,27 @@ installing these components in a mostly automated fashion.
 1. Run `make save` to save docker image to `build/`
 2. Copy image to server
 3. Import image on server using `podman load -i ${FILENAME}`
+4. Make copy of `scripts/wrapper.py` modified to use the resulting docker image, by updating the `IMAGE` and `VERSION` variables.
 
 ### Running
 
-Use `scripts/wrapper.py` to run the container; this script takes care of mounting required and (optionally) projects, datasets, more.
+The wrapper-script at `scripts/wrapper.py` is intended to help run the container images; this script takes care of mounting required folders and (optionally) projects, datasets, more.
 
-Before running, update script to use desired image tag.
+Briefly, use the `--project` option to list projects to mount, the `--dataset` option to mount datasets, `--sdir` and `--ndir` to mount network drives, and `--hdir` to mount `H:`. All of these options, except for `--hdir`, take either the name of a project/dataset/folder or the path to that folder.
+
+The following two commands are therefore equivalent:
 
 ```console
-$ python3.11 scripts/wrapper.py --projects phenomics-AUDIT
+--project phenomics-AUDIT
+--project /projects/phenomics-AUDIT
+```
+
+Note that you must authenticate to access network drives (`H:`, `N:`, and `S:`). This is accomplished by running `kinit` and entering your password *before* running the wrapper script or attempting to browse those folders. If you access the folders first, and possibly get an error, then you may have to wait a few minutes after authenticating with `kinit` before the drives are accessible.
+
+Note that a random RDP password is generated/printed every time the container is started. This password is required to connect to the server using, for example, [freerdp](https://www.freerdp.com/):
+
+```console
+$ python3.11 scripts/wrapper.py
 Password is 'b54773ca-2f1c-11f0-86f0-5f2b2e38cfd8'
 xrdp-sesman[21]: [INFO ] starting xrdp-sesman with pid 21
 
@@ -44,8 +56,6 @@ xrdp[23]: [INFO ] listening to port 3389 on 0.0.0.0
 
 xrdp[23]: [INFO ] xrdp_listen_pp done
 ```
-
-Note that a random password is generated/printed every time the container is started.
 
 ## Connecting
 
