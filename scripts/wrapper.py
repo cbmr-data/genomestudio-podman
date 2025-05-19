@@ -121,6 +121,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--background",
+        default=False,
+        action="store_true",
+        help="Run the container in the background, instead of interactively",
+    )
+
+    parser.add_argument(
         "--entry-point",
         default=None,
         help="Override podman container entry-point",
@@ -179,6 +186,9 @@ def main(argv: list[str]) -> int:
 
     for path in mount_points:
         command += ["-v", f"{path}:{path}"]
+
+    if not args.background:
+        command += ["--rm", "-it"]
 
     if args.entry_point is not None:
         command += ["--entrypoint", args.entry_point]
