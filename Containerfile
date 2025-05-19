@@ -57,7 +57,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && apt-get install -y \
         xrdp-egfx \
         xorgxrdp-egfx \
-        winehq-devel=10.7~noble-1
+        winehq-devel=10.8~noble-1
 
 # Install wine-tricks
 RUN DIR=$(mktemp -d) \
