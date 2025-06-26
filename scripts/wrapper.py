@@ -5,6 +5,7 @@ import argparse
 import functools
 import getpass
 import os
+import random
 import shlex
 import sys
 from pathlib import Path
@@ -37,6 +38,12 @@ def abort(*values: object) -> NoReturn:
 
 def quote(value: str | Path) -> str:
     return shlex.quote(str(value))
+
+
+def random_port() -> int:
+    # Pseudo-randomly assign a port per user
+    rng = random.Random(os.getuid())
+    return rng.randint(1024, 49152)
 
 
 def validate_names(values: Iterable[Path], root: Path, name: str) -> Iterable[Path]:
@@ -111,7 +118,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--uid", type=int, default=os.getuid(), help="UID for uidmap")
     parser.add_argument("--gid", type=int, default=os.getgid(), help="GID for gidmap")
 
-    parser.add_argument("--port", type=int, default=3389, help="Exposed port for XRDP")
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=random_port(),
+        help="Exposed port for XRDP",
+    )
 
     parser.add_argument(
         "--dry-run",
@@ -198,6 +210,7 @@ def main(argv: list[str]) -> int:
         print(*(shlex.quote(v) for v in command))
         return 0
     else:
+        eprint(f"Binding to port :{args.port}")
         os.execvp(args.podman, command)
 
 
