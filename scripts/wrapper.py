@@ -48,9 +48,12 @@ def random_port() -> int:
 
 def validate_names(values: Iterable[Path], root: Path, name: str) -> Iterable[Path]:
     for value in values:
-        value = value.resolve()
-        if value.parent not in (Path("."), root):
-            abort(f"{name} {quote(value)} contains dir component; use name only")
+        if value.parent != Path(".") and value.resolve().parent != root:
+            abort(
+                f"{name} {quote(value)} is invalid; use either a project name such as "
+                "'phenomics-AUDIT', or the path to the project root folder, such as "
+                "'/projects/phenomics-AUDIT'"
+            )
 
         yield value
 
