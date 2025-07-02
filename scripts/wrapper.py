@@ -69,6 +69,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
     parser.add_argument(
         "--project",
+        "--projects",
         type=Path,
         dest="projects",
         action="append",
@@ -78,6 +79,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
     parser.add_argument(
         "--dataset",
+        "--datasets",
         type=Path,
         dest="datasets",
         action="append",
