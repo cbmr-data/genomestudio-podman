@@ -36,11 +36,12 @@ connect:
 
 container:
 	podman build -t $(IMAGE) -t $(NAME):latest .
-	podman system prune --force
 
 save: build/$(NAME)_$(TAG).tar.gz
 
 run: container
+	test -d "$(WINEPREFIX)"
+	test -d "$(INSTALLERS)"
 	$(PODMAN_RUN) $(IMAGE)
 
 .PHONY: run bash connect container save
