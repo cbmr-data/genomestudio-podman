@@ -1,16 +1,18 @@
---- /etc/xrdp/sesman.ini.modified	2025-04-14 09:31:55.424276460 +0200
-+++ /etc/xrdp/sesman.ini	2025-04-14 09:33:53.761837944 +0200
-@@ -12,13 +12,13 @@
- ReconnectScript=reconnectwm.sh
-
+--- /etc/xrdp/sesman.ini.modified	2025-09-05 08:39:25.220584485 +0000
++++ /etc/xrdp/sesman.ini	2025-09-05 08:12:58.000000000 +0000
+@@ -16,7 +16,7 @@
+ #AlwaysRunReconnect=no
+ 
  [Security]
 -AllowRootLogin=true
 +AllowRootLogin=false
  MaxLoginRetry=4
+ XAuthorityInSystemDir=no
  TerminalServerUsers=tsusers
- TerminalServerAdmins=tsadmins
+@@ -24,7 +24,7 @@
  ; When AlwaysGroupCheck=false access will be permitted
- ; if the group TerminalServerUsers is not defined.
+ ; if the group TerminalServerUsers is not defined, and the
+ ; non-existence of TerminalServerAdmins will not be reported
 -AlwaysGroupCheck=false
 +AlwaysGroupCheck=true
  ; When RestrictOutboundClipboard=all clipboard from the
