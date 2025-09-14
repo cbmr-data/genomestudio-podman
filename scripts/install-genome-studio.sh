@@ -25,7 +25,7 @@ cd /opt/genome-studio/installers/ || exit
 if [ ! -e "GenomeStudioInstaller.exe" ]; then
     echo "Genome Studio installer (GenomeStudioInstaller.exe) not found."
     echo "Please download 'GenomeStudioInstaller.exe' from 'https://emea.support.illumina.com/downloads/genomestudio-2-0.html',"
-    echo "and place the installer in the "installers" mount before running "
+    echo "and place the installer in the \"installers\" mount before running "
     echo "the installation script again."
     echo
     echo "Press enter to close this window..."
@@ -43,14 +43,10 @@ env WINEDLLOVERRIDES=mscoree=d winecfg /v win7
 
 echo "## Installing wine-gecko"
 # The gecko browser engine is required for embedded HTML in Genome Studio
-# https://dl.winehq.org/wine/wine-gecko/2.47.4/wine-gecko-2.47.4-x86.msi
-wine msiexec -i wine-gecko-2.47.4-x86.msi
 # https://dl.winehq.org/wine/wine-gecko/2.47.4/wine-gecko-2.47.4-x86_64.msi
 wine msiexec -i wine-gecko-2.47.4-x86_64.msi
 
 # Genome Studio requirements
-echo "## Installing dotnet35"
-winetricks --unattended dotnet35
 echo "## Installing dotnet472"
 winetricks --unattended dotnet472
 
