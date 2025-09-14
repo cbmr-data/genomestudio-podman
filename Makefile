@@ -1,21 +1,21 @@
+NAME := genome-studio
+TAG := $(shell git describe --always --dirty)
+IMAGE := $(NAME):$(TAG)
 
-PASSWORD :=
-WINEPREFIX := $(realpath ./wineprefix)
+WINEPREFIX := $(NAME)
 INSTALLERS := $(realpath ./installers)
 
+PASSWORD :=
 PORT := 3389
+
 
 # https://github.com/containers/podman/issues/24934
 PODMAN_UID := --uidmap +1000:@$(shell id -u):1
 PODMAN_GID := --gidmap +1000:@$(shell id -g):1
 PODMAN_RUN := podman run --rm -it -p $(PORT):3389 \
 	 $(PODMAN_UID) $(PODMAN_GID) \
-	-v $(WINEPREFIX):/opt/genome-studio/wineprefix:z \
+	-v $(WINEPREFIX):/opt/genome-studio/wineprefix \
 	-v $(INSTALLERS):/opt/genome-studio/installers
-
-NAME := genome-studio
-TAG := $(shell git describe --always --dirty)
-IMAGE := $(NAME):$(TAG)
 
 all: run
 
@@ -29,6 +29,7 @@ build/$(NAME)_$(TAG).sif: build/$(NAME)_$(TAG).tar.gz
 	singularity build $@ docker-archive://$<
 
 bash: container
+	test -d "$(INSTALLERS)"
 	$(PODMAN_RUN) --entrypoint bash $(IMAGE)
 
 connect:
@@ -39,9 +40,14 @@ container:
 
 save: build/$(NAME)_$(TAG).tar.gz
 
-run: container
-	test -d "$(WINEPREFIX)"
+remove-volume:
+	podman volume rm $(WINEPREFIX)
+
+run: container volume
 	test -d "$(INSTALLERS)"
 	$(PODMAN_RUN) $(IMAGE)
 
-.PHONY: run bash connect container save
+volume:
+	podman volume create --ignore $(WINEPREFIX)
+
+.PHONY: all bash connect container save remove-volume run volume

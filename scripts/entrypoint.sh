@@ -17,4 +17,5 @@ password=$(uuid)
 echo "$(tput setaf 3) Password is '${password}' $(tput sgr0)"
 echo "ubuntu:${password}" | sudo chpasswd
 
+sudo chown ubuntu:ubuntu /opt/genome-studio/wineprefix
 sudo xrdp-sesman && exec sudo xrdp -n
