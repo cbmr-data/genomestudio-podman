@@ -47,11 +47,11 @@ echo "## Installing wine-gecko"
 wine msiexec -i wine-gecko-2.47.4-x86_64.msi
 
 # Genome Studio requirements
-echo "## Installing dotnet472"
-winetricks --unattended dotnet472
+echo "## Downloading wine-mono"
+download "https://dl.winehq.org/wine/wine-mono/11.3.0/wine-mono-11.3.0-x86.msi" "df2dfc1665c2511882e7cabd56eafd0c0a3d94e5a7e86f969277f6c189d418d3"
 
-echo "## Disabling theming for apps run in wine"
-winetricks windowmanagerdecorated=n
+echo "## Installing wine-mono"
+wine msiexec -i wine-mono-11.3.0-x86.msi
 
 # Install GS
 echo "## Installing GenomeStudio"

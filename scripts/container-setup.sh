@@ -28,10 +28,6 @@ cp /opt/genome-studio/desktop/login-setup.desktop /home/ubuntu/.config/autostart
 chmod +x /home/ubuntu/.config/autostart/*.desktop
 chown -R ubuntu:ubuntu /home/ubuntu/.config
 
-mkdir -p /home/ubuntu/.cache/
-ln -s /opt/genome-studio/installers /home/ubuntu/.cache/winetricks
-chown -R ubuntu:ubuntu /home/ubuntu/.cache
-
 ln -s /maps/projects /
 ln -s /maps/datasets /
 
