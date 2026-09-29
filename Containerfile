@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ubuntu:noble-20250404
+FROM ubuntu:jammy-20260810
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -19,6 +19,7 @@ RUN dpkg --add-architecture i386
 # - patch is required for scripts/container-setup.sh
 # - uuid is required for scripts/entrypoint.sh
 # - wget is required for winetricks and scripts/download-installers.sh
+# - software-properties-common is required or `add-apt-repository`
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get -y update \
@@ -36,6 +37,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         nano \
         patch \
         pgp \
+        software-properties-common \
         sudo \
         uuid \
         wget \
@@ -45,31 +47,25 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # Add wine repository
 RUN mkdir -pm755 /etc/apt/keyrings && wget -O - https://dl.winehq.org/wine-builds/winehq.key | gpg --dearmor -o /etc/apt/keyrings/winehq-archive.key -
-RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/noble/winehq-noble.sources
+RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
 
 # Add xrdp-egfx repo
-RUN echo "deb https://ppa.launchpadcontent.net/saxl/xrdp-egfx/ubuntu noble main" > /etc/apt/sources.list.d/xrdp-egfx.list
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6A62F35CFA4519495360AA269D11B02C172D9152
+RUN add-apt-repository ppa:saxl/xrdp-egfx
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update \
     && apt-get install -y \
+        winehq-devel=11.17~jammy-1 \
         xrdp-egfx \
         xorgxrdp-egfx
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update \
-    && apt-get install -y \
-        winehq-devel=10.14~noble-1
 
 # Install wine-tricks
 RUN DIR=$(mktemp -d) \
     && cd "${DIR}" \
-    && wget "https://github.com/Winetricks/winetricks/archive/refs/tags/20250102.tar.gz" \
-    && tar xvzf "${DIR}/20250102.tar.gz" \
-    && make -C "winetricks-20250102/" install \
+    && wget "https://github.com/Winetricks/winetricks/archive/refs/tags/20260125.tar.gz" \
+    && tar xvzf "${DIR}/20260125.tar.gz" \
+    && make -C "winetricks-20260125/" install \
     && rm -rv "${DIR}"
 
 COPY --chmod=555 scripts/*.sh /opt/genome-studio/bin/
