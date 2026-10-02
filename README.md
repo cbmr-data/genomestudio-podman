@@ -12,10 +12,10 @@ installing these components in a mostly automated fashion.
 
 ## Prerequisites
 
-* A copy of the [GenomeStudioInstaller.exe](https://emea.support.illumina.com/downloads/genomestudio-2-0.html) placed in `./installers`
-* Podman (tested on 4.9.3 and 4.9.4)
-* An XRDP client such as xfreerdp3
-* make
+- A copy of the [GenomeStudioInstaller.exe](https://emea.support.illumina.com/downloads/genomestudio-2-0.html) placed in `./installers`
+- Podman (tested on 4.9.3 and 4.9.4)
+- An XRDP client such as xfreerdp3
+- make
 
 ## Usage
 
@@ -39,7 +39,7 @@ The following two commands are therefore equivalent:
 --project /projects/phenomics-AUDIT
 ```
 
-Note that you must authenticate to access network drives (`H:`, `N:`, and `S:`). This is accomplished by running `kinit` and entering your password *before* running the wrapper script or attempting to browse those folders. If you access the folders first, and possibly get an error, then you may have to wait a few minutes after authenticating with `kinit` before the drives are accessible.
+Note that you must authenticate to access network drives (`H:`, `N:`, and `S:`). This is accomplished by running `kinit` and entering your password _before_ running the wrapper script or attempting to browse those folders. If you access the folders first, and possibly get an error, then you may have to wait a few minutes after authenticating with `kinit` before the drives are accessible.
 
 Note that a random RDP password is generated/printed every time the container is started. This password is required to connect to the server using, for example, [freerdp](https://www.freerdp.com/):
 
@@ -69,7 +69,7 @@ xrdp[23]: [INFO ] xrdp_listen_pp done
 
    ```console
    sudo apt install freerdp3-x11
-   xfreerdp3  /size:1680x970 /v:localhost:3389 /u:ubuntu /p:${PASSWORD}
+   xfreerdp3 /size:1680x970 /v:localhost:3389 /u:ubuntu /p:${PASSWORD}
    ```
 
 The password is printed in the container output as shown above. If the container
