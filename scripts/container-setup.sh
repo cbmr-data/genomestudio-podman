@@ -16,7 +16,7 @@ echo "WINEPREFIX=/opt/genome-studio/wineprefix" | tee -a /etc/environment
 echo "WINEDEBUG=fixme-all" | tee -a /etc/environment
 
 # Create and add user to group required for login
-adduser ubuntu
+adduser --disabled-password --gecos "" ubuntu
 groupadd tsusers
 usermod -a -G tsusers ubuntu
 
