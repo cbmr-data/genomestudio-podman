@@ -7,9 +7,12 @@ import getpass
 import os
 import random
 import shlex
+import socket
+import subprocess
 import sys
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, NoReturn
+from typing import NoReturn
 
 IMAGE = "genome-studio"
 VERSION = "latest"
@@ -41,9 +44,9 @@ def quote(value: str | Path) -> str:
 
 
 def random_port() -> int:
-    # Pseudo-randomly assign a port per user
+    # Pseudo-randomly assign a port per user in range of open ports on Esrum nodes
     rng = random.Random(os.getuid())
-    return rng.randint(1024, 49152)
+    return rng.randint(8900, 9000)
 
 
 def validate_names(values: Iterable[Path], root: Path, name: str) -> Iterable[Path]:
@@ -56,6 +59,32 @@ def validate_names(values: Iterable[Path], root: Path, name: str) -> Iterable[Pa
             )
 
         yield value
+
+
+def require_image(exec: str, image: str, tag: str) -> bool:
+    eprint(f"Checking for Genome Studio container: {image}:{tag}")
+    if not subprocess.call(
+        [exec, "image", "exists", f"{image}:{tag}"],
+        stdin=subprocess.DEVNULL,
+    ):
+        eprint("  - Container image is available")
+        return True
+
+    eprint("  - Container image is not available")
+    filename = Path(__file__).parent / f"{image}_{tag}.tar.gz"
+    if not filename.exists():
+        eprint(f"  - Container image not found at '{filename}'")
+        return False
+
+    eprint(f"  - Loading container image from '{filename}'")
+    if not subprocess.call(
+        [exec, "load", "-i", filename],
+        stdin=subprocess.DEVNULL,
+    ):
+        return True
+
+    eprint("ERROR: Could not load container image!")
+    return False
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -113,10 +142,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--wine-prefix",
-        type=Path,
-        default=Path(f"/scratch/containers/{USERNAME}/wineprefix"),
-        help="Location of wine prefix",
+        "--volume",
+        default="genome-studio",
+        help="Volume or path for wine prefix",
+    )
+
+    parser.add_argument(
+        "--installers",
+        type=lambda value: Path(value).resolve(),
+        default=Path("./installers").resolve(),
+        help="Path to wine/Genome Studio installers",
     )
 
     parser.add_argument("--podman", default="podman", help="podman executable")
@@ -187,18 +222,26 @@ def main(argv: list[str]) -> int:
     if errors:
         return 1
 
+    if not require_image(args.podman, image=IMAGE, tag=VERSION):
+        return 1
+
+    hostname = socket.gethostname()
     command: list[str] = [
         args.podman,
         "run",
         "--rm",
         "-it",
         f"-p{args.port}:3389",
+        f"--env=EXTHOST={hostname}",
+        f"--env=EXTPORT={args.port}",
         "--uidmap",
         f"+1000:@{args.uid}:1",
         "--gidmap",
         f"+1000:@{args.gid}:1",
         "-v",
-        f"{args.wine_prefix}:/opt/genome-studio/wineprefix:z",
+        f"{args.volume}:/opt/genome-studio/wineprefix:z",
+        "-v",
+        f"{args.installers}:/opt/genome-studio/installers",
     ]
 
     for path in mount_points:
@@ -215,7 +258,7 @@ def main(argv: list[str]) -> int:
         print(*(shlex.quote(v) for v in command))
         return 0
     else:
-        eprint(f"Binding to port :{args.port}")
+        eprint(f"Binding to port {hostname}:{args.port}")
         os.execvp(args.podman, command)
 
 

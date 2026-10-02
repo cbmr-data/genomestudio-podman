@@ -14,7 +14,14 @@ stop_xrdp_services() {
 trap "stop_xrdp_services" SIGTERM SIGHUP SIGINT EXIT
 
 password=$(uuid)
+echo
 echo "$(tput setaf 3) Password is '${password}' $(tput sgr0)"
+if [ -n "${EXTHOST:-}" ] && [ -n "${EXTPORT:-}" ]; then
+    echo "$(tput setaf 3) To connect using xfreerdp3$(tput sgr0)"
+    echo "$(tput setaf 3)     xfreerdp3 /size:1920x1080 /v:${EXTHOST}:${EXTPORT} /u:ubuntu /p:${password}$(tput sgr0)"
+fi
+echo
+
 echo "ubuntu:${password}" | sudo chpasswd
 
 sudo chown ubuntu:ubuntu /opt/genome-studio/wineprefix
